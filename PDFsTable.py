@@ -60,7 +60,9 @@ st.markdown("""
 - **Stream:** Best for tables without visible borders.  
 - **Guess:** Automatically selects the best method.
 """)
-method = st.selectbox("Select Extraction Method", ["Lattice", "Stream", "Guess"], index=0)
+
+st.markdown("**Select Extraction Method**")
+method = st.selectbox("", ["Lattice", "Stream", "Guess"], index=0)
 
 
 
