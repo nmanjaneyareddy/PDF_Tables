@@ -9,7 +9,7 @@ table_icon = "https://img.freepik.com/premium-psd/csv-file_689261-99.jpg"
 
 # Display icons and title
 st.image(pdf_icon, width=40)
-st.image(table_icon, width=40)
+st.image("to", table_icon, width=40)
 
 # Function to convert PDFs to CSV
 def convert_pdfs(pdf_files, method):
