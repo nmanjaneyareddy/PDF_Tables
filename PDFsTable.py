@@ -35,15 +35,18 @@ def convert_pdfs(pdf_files, method):
 # Streamlit UI
 st.title("PDF Table to CSV Converter")
 
+uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
+
+
 st.markdown("""
 **Data Extraction Methods:**  
 - **Lattice:** Best for tables with grid lines.  
 - **Stream:** Best for tables without visible borders.  
 - **Guess:** Automatically selects the best method.
 """)
-
-uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
 method = st.selectbox("Select Extraction Method", ["Lattice", "Stream", "Guess"], index=0)
+
+
 
 if uploaded_files and st.button("Convert to CSV"):
     converted_files = convert_pdfs(uploaded_files, method)
