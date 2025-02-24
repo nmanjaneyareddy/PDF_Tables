@@ -22,7 +22,7 @@ with col3:
     st.image(table_icon, width=50)
 
 # Streamlit App Title
-st.title("AccuTable: PDF to CSV)")
+st.title("AccuTable: PDF to CSV")
 
 st.write(
     "🚀 This application extracts tables from **text-based PDFs only** and converts them into **CSV** files in batch mode. "
@@ -43,22 +43,24 @@ st.markdown("""
 # Select the method of extraction
 method = st.selectbox("Select Extraction Method", ["Lattice", "Stream", "Guess"], index=0)
 
-# Function to convert PDFs to CSV without reading tables
+# Function to convert PDFs to CSV while keeping original file name
 def batch_convert_pdfs(pdf_files, method):
     converted_files = []
 
     for pdf_file in pdf_files:
+        original_name = os.path.splitext(pdf_file.name)[0]  # Get filename without extension
+
         with NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
             temp_pdf.write(pdf_file.getbuffer())
             temp_pdf_path = temp_pdf.name  # Get temporary PDF path
 
-        # Define CSV output path
-        output_csv = temp_pdf_path.replace(".pdf", ".csv")
+        # Define CSV output path with the original file name
+        output_csv = f"{original_name}.csv"
 
         # Determine extraction mode
         lattice = method == "Lattice"
         stream = method == "Stream"
-        
+
         if method == "Guess":  # If Guess, let tabula decide the best mode
             lattice, stream = None, None
 
@@ -78,7 +80,7 @@ def create_zip(files):
     zip_buffer = BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
         for file in files:
-            zipf.write(file, os.path.basename(file))
+            zipf.write(file, file)  # Keep original CSV file name
             os.remove(file)  # Clean up CSV file after adding to ZIP
     zip_buffer.seek(0)
     return zip_buffer
