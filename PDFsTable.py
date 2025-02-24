@@ -25,8 +25,8 @@ with col3:
 st.title("AccuTable: PDF to CSV")
 
 st.write(
-    "🚀 This application extracts tables from **text-based PDFs only** and converts them into **CSV** files in batch mode. "
-    "Users can choose the appropriate extraction method **(Lattice, Stream, or Guess)** for accurate table recognition 🚀"
+    "🚀 This application extracts tables from **text-based PDFs only** and converts them into **CSV** files. "
+    "You can choose the appropriate extraction method **(Lattice, Stream, or Guess)** for accurate table recognition 🚀"
 )
 
 # File uploader for multiple PDFs
@@ -35,10 +35,10 @@ uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multi
 # Extraction method selection
 st.markdown("""
 **Data Extraction Methods:**  
-- **Lattice:** Best for tables with grid lines.  
-- **Stream:** Best for tables without visible borders.  
-- **Guess:** Automatically selects the best method.
-""")
+- **_Lattice:_** Best for tables with grid lines.  
+- _**Stream:_** Best for tables without visible borders.  
+- _**Guess:_** Automatically selects the best method.
+""", unsafe_allow_html=True))
 
 # Select the method of extraction
 method = st.selectbox("Select Extraction Method", ["Lattice", "Stream", "Guess"], index=0)
