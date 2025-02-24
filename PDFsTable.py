@@ -61,9 +61,8 @@ st.markdown("""
 - **Guess:** Automatically selects the best method.
 """)
 
-st.markdown("
+st.markdown()
 method = st.selectbox("**Select Extraction Method**", ["Lattice", "Stream", "Guess"], index=0)
-")
 
 
 
