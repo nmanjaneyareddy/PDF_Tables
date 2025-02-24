@@ -3,6 +3,14 @@ import tabula
 import pandas as pd
 from io import BytesIO
 
+# PDF and Table Icons
+pdf_icon = "https://cdn.pixabay.com/photo/2020/03/10/17/02/pdf-4919559_1280.png"
+table_icon = "https://img.freepik.com/premium-psd/csv-file_689261-99.jpg"
+
+# Display icons and title
+st.image(pdf_icon, width=40)
+st.image(table_icon, width=40)
+
 # Function to convert PDFs to CSV
 def convert_pdfs(pdf_files, method):
     converted_files = []
