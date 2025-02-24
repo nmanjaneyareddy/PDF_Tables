@@ -50,6 +50,7 @@ def convert_pdfs(pdf_files, method):
 
 # Streamlit UI
 st.title("PDF Table to CSV Converter")
+st.write("This application extracts tables from **text-based PDFs only** and converts them into **CSV** files. Users can choose the appropriate extraction method **(Lattice, Stream, or Guess)** for accurate table recognition🚀🚀")
 
 uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
 
