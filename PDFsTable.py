@@ -1,7 +1,8 @@
-import base64
 import streamlit as st
 import tabula
 import os
+import zipfile
+from io import BytesIO
 
 # PDF and Table Icons
 pdf_icon = "https://cdn.pixabay.com/photo/2020/03/10/17/02/pdf-4919559_1280.png"
@@ -65,17 +66,22 @@ def batch_convert_pdfs(pdf_files, method):
 
     return converted_files
 
-# Process and download CSVs
+# Process and download ZIP
 if uploaded_files and st.button("Convert to CSV"):
     converted_files = batch_convert_pdfs(uploaded_files, method)
 
     if converted_files:
         st.success(f"✅ Successfully converted {len(converted_files)} file(s)!")
-        
-        for csv_filename in converted_files:
-            st.write(f"📥 Download: **{csv_filename}**")
 
-            with open(csv_filename, "rb") as f:
-                st.download_button(f"Download {csv_filename}", data=f, file_name=csv_filename, mime="text/csv")
+        # Create ZIP file
+        zip_file = create_zip(converted_files)
 
-        st.balloons()  # 🎈 Success effect
+        # Provide ZIP download
+        st.download_button(
+            label="📥 Download All as ZIP",
+            data=zip_file,
+            file_name="Converted_CSVs.zip",
+            mime="application/zip"
+        )
+
+        st.balloons()  # 🎈 Success animation
