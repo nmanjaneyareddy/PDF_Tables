@@ -1,7 +1,6 @@
 import streamlit as st
 import tabula
-import pandas as pd
-from io import BytesIO
+import os
 
 # PDF and Table Icons
 pdf_icon = "https://cdn.pixabay.com/photo/2020/03/10/17/02/pdf-4919559_1280.png"
@@ -19,11 +18,34 @@ with col2:
 with col3:
     st.image(table_icon, width=50)
 
-# Function to convert PDFs to CSV
-def convert_pdfs(pdf_files, method):
-    converted_files = []
+# Streamlit App Title
+st.title("AccuTable: PDF to CSV (Batch Mode)")
+
+st.write(
+    "🚀 This application extracts tables from **text-based PDFs only** and converts them into **CSV** files in batch mode. "
+    "Users can choose the appropriate extraction method **(Lattice, Stream, or Guess)** for accurate table recognition 🚀"
+)
+
+# File uploader for multiple PDFs
+uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
+
+# Extraction method selection
+st.markdown("""
+**Data Extraction Methods:**  
+- **Lattice:** Best for tables with grid lines.  
+- **Stream:** Best for tables without visible borders.  
+- **Guess:** Automatically selects the best method.
+""")
+
+# Select the method of extraction
+method = st.selectbox("Select Extraction Method", ["Lattice", "Stream", "Guess"], index=0)
+
+# Function to convert PDFs to CSV without reading tables
+def batch_convert_pdfs(pdf_files, method):
     lattice = method == "Lattice"
     stream = method == "Stream"
+
+    converted_files = []
 
     for pdf_file in pdf_files:
         filename = pdf_file.name
@@ -33,43 +55,19 @@ def convert_pdfs(pdf_files, method):
         with open(filename, "wb") as f:
             f.write(pdf_file.getbuffer())
 
-        # Convert PDF to CSV
-        dfs = tabula.read_pdf(filename, pages="all", multiple_tables=True, lattice=lattice, stream=stream)
-        
-        # Merge tables if multiple tables are found
-        if dfs:
-            df = pd.concat(dfs)
-        else:
-            df = pd.DataFrame()
-
-        # Convert dataframe to CSV
-        csv = df.to_csv(index=False).encode("utf-8")
-        converted_files.append((output_csv, csv, df))
+        # Convert PDF to CSV (Batch Mode)
+        try:
+            tabula.convert_into(filename, output_csv, output_format='csv', lattice=lattice, stream=stream, pages='all')
+            converted_files.append(output_csv)
+        except Exception as e:
+            st.error(f"Error converting {filename}: {e}")
 
     return converted_files
 
-# Streamlit UI
-st.title("AccuTable: PDF to CSV")
-st.write("🚀This application extracts tables from **text-based PDFs only** and converts them into **CSV** files. Users can choose the appropriate extraction method **(Lattice, Stream, or Guess)** for accurate table recognition🚀")
-
-uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
-
-
-st.markdown("""
-**Data Extraction Methods:**  
-- **Lattice:** Best for tables with grid lines.  
-- **Stream:** Best for tables without visible borders.  
-- **Guess:** Automatically selects the best method.
-""")
-
-#select the method of extraction
-method = st.selectbox(("Select Extraction Method"), ["Lattice", "Stream", "Guess"], index=0)
-
-
-
+# Process and download CSVs
 if uploaded_files and st.button("Convert to CSV"):
-    converted_files = convert_pdfs(uploaded_files, method)
+    converted_files = batch_convert_pdfs(uploaded_files, method)
 
-    for filename, csv_data, df in converted_files:
-        st.download_button(f"Download {filename}", data=csv_data, file_name=filename, mime="text/csv")
-        st.dataframe(df)
+    for csv_filename in converted_files:
+        with open(csv_filename, "rb") as f:
+            st.download_button(f"Download {csv_filename}", data=f, file_name=csv_filename, mime="text/csv")
