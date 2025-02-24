@@ -62,7 +62,7 @@ st.markdown("""
 """)
 
 st.markdown()
-method = st.selectbox("**Select Extraction Method**", ["Lattice", "Stream", "Guess"], index=0)
+method = st.selectbox(st.markdown("**Select Extraction Method**"), ["Lattice", "Stream", "Guess"], index=0)
 
 
 
