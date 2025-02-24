@@ -70,7 +70,7 @@ if uploaded_files and st.button("Convert to CSV"):
 
     for csv_filename in converted_files:
         with open(csv_filename, "rb") as f:
-            csv_data = f.read()
+            csv_data = f.read()  # Ensure we read bytes
             b64 = base64.b64encode(csv_data).decode()  # Encode to Base64
             href = f'<a href="data:file/csv;base64,{b64}" download="{csv_filename}">Click here to download {csv_filename}</a>'
             st.markdown(href, unsafe_allow_html=True)  # Auto-download trigger
