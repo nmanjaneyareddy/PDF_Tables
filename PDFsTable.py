@@ -13,13 +13,13 @@ table_icon = "https://img.freepik.com/premium-psd/csv-file_689261-99.jpg"
 col1, col2, col3 = st.columns([1, 0.5, 1])
 
 with col1:
-    st.image(pdf_icon, width=50)
+    st.image(pdf_icon, width=60)
 
 with col2:
-    st.markdown("<h4 style='text-align: center;'>➡️</h4>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center;'>➡️</h2>", unsafe_allow_html=True)
 
 with col3:
-    st.image(table_icon, width=50)
+    st.image(table_icon, width=60)
 
 # Streamlit App Title
 st.title("AccuTable: PDF to CSV")
