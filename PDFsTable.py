@@ -3,6 +3,7 @@ import tabula
 import os
 import zipfile
 from io import BytesIO
+from tempfile import NamedTemporaryFile
 
 # PDF and Table Icons
 pdf_icon = "https://cdn.pixabay.com/photo/2020/03/10/17/02/pdf-4919559_1280.png"
@@ -15,13 +16,13 @@ with col1:
     st.image(pdf_icon, width=50)
 
 with col2:
-    st.markdown("<h4>  ---------></h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align: center;'>➡️</h4>", unsafe_allow_html=True)
 
 with col3:
     st.image(table_icon, width=50)
 
 # Streamlit App Title
-st.title("AccuTable: PDF to CSV (Batch Mode)")
+st.title("AccuTable: PDF to CSV)")
 
 st.write(
     "🚀 This application extracts tables from **text-based PDFs only** and converts them into **CSV** files in batch mode. "
@@ -44,27 +45,43 @@ method = st.selectbox("Select Extraction Method", ["Lattice", "Stream", "Guess"]
 
 # Function to convert PDFs to CSV without reading tables
 def batch_convert_pdfs(pdf_files, method):
-    lattice = method == "Lattice"
-    stream = method == "Stream"
-
     converted_files = []
 
     for pdf_file in pdf_files:
-        filename = pdf_file.name
-        output_csv = f"{filename}.csv"
+        with NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
+            temp_pdf.write(pdf_file.getbuffer())
+            temp_pdf_path = temp_pdf.name  # Get temporary PDF path
 
-        # Save file temporarily
-        with open(filename, "wb") as f:
-            f.write(pdf_file.getbuffer())
+        # Define CSV output path
+        output_csv = temp_pdf_path.replace(".pdf", ".csv")
 
-        # Convert PDF to CSV (Batch Mode)
+        # Determine extraction mode
+        lattice = method == "Lattice"
+        stream = method == "Stream"
+        
+        if method == "Guess":  # If Guess, let tabula decide the best mode
+            lattice, stream = None, None
+
         try:
-            tabula.convert_into(filename, output_csv, output_format='csv', lattice=lattice, stream=stream, pages='all')
+            tabula.convert_into(temp_pdf_path, output_csv, output_format='csv', lattice=lattice, stream=stream, pages='all')
             converted_files.append(output_csv)
         except Exception as e:
-            st.error(f"Error converting {filename}: {e}")
+            st.error(f"Error converting {pdf_file.name}: {e}")
+        
+        # Remove the temporary PDF file after conversion
+        os.remove(temp_pdf_path)
 
     return converted_files
+
+# Function to create a ZIP file
+def create_zip(files):
+    zip_buffer = BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
+        for file in files:
+            zipf.write(file, os.path.basename(file))
+            os.remove(file)  # Clean up CSV file after adding to ZIP
+    zip_buffer.seek(0)
+    return zip_buffer
 
 # Process and download ZIP
 if uploaded_files and st.button("Convert to CSV"):
