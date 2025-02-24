@@ -14,7 +14,7 @@ with col1:
     st.image(pdf_icon, width=50)
 
 with col2:
-    st.markdown("<h4 style='text-align: left;'>  ---------></h4>", unsafe_allow_html=True)
+    st.markdown("<h4>  ---------></h4>", unsafe_allow_html=True)
 
 with col3:
     st.image(table_icon, width=50)
