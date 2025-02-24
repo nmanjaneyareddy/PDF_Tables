@@ -72,12 +72,10 @@ if uploaded_files and st.button("Convert to CSV"):
     if converted_files:
         st.success(f"✅ Successfully converted {len(converted_files)} file(s)!")
         
-        # Generate JavaScript for automatic downloads
         for csv_filename in converted_files:
-            st.write(f"📥 Downloading: **{csv_filename}**")
-            time.sleep(1)  # Simulate download process
+            st.write(f"📥 Download: **{csv_filename}**")
 
             with open(csv_filename, "rb") as f:
                 st.download_button(f"Download {csv_filename}", data=f, file_name=csv_filename, mime="text/csv")
 
-        st.balloons()  # 🎈 Visual success indicator
+        st.balloons()  # 🎈 Success effect
