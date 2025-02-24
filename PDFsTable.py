@@ -69,9 +69,15 @@ def batch_convert_pdfs(pdf_files, method):
 if uploaded_files and st.button("Convert to CSV"):
     converted_files = batch_convert_pdfs(uploaded_files, method)
 
-    for csv_filename in converted_files:
-        with open(csv_filename, "rb") as f:
-            csv_data = f.read()  # Read as bytes
-            b64 = base64.b64encode(csv_data).decode()  # Encode to Base64
-            href = f'<a href="data:file/csv;base64,{b64}" download="{csv_filename}">Click here to download {csv_filename}</a>'
-            st.markdown(href, unsafe_allow_html=True)  # Auto-download trigger
+    if converted_files:
+        st.success(f"✅ Successfully converted {len(converted_files)} file(s)!")
+        
+        # Generate JavaScript for automatic downloads
+        for csv_filename in converted_files:
+            st.write(f"📥 Downloading: **{csv_filename}**")
+            time.sleep(1)  # Simulate download process
+
+            with open(csv_filename, "rb") as f:
+                st.download_button(f"Download {csv_filename}", data=f, file_name=csv_filename, mime="text/csv")
+
+        st.balloons()  # 🎈 Visual success indicator
