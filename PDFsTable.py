@@ -8,8 +8,16 @@ pdf_icon = "https://cdn.pixabay.com/photo/2020/03/10/17/02/pdf-4919559_1280.png"
 table_icon = "https://img.freepik.com/premium-psd/csv-file_689261-99.jpg"
 
 # Display icons and title
-st.image(pdf_icon, width=40)
-st.image("to", table_icon, width=40)
+col1, col2, col3 = st.columns([1, 0.5, 1])
+
+with col1:
+    st.image(pdf_icon, width=50)
+
+with col2:
+    st.markdown("<h3 style='text-align: center;'>TO</h3>", unsafe_allow_html=True)
+
+with col3:
+    st.image(table_icon, width=50)
 
 # Function to convert PDFs to CSV
 def convert_pdfs(pdf_files, method):
