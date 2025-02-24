@@ -64,17 +64,13 @@ def batch_convert_pdfs(pdf_files, method):
 
     return converted_files
 
-# Process and display download buttons
+# Process and download CSVs
 if uploaded_files and st.button("Convert to CSV"):
     converted_files = batch_convert_pdfs(uploaded_files, method)
 
     for csv_filename in converted_files:
         with open(csv_filename, "rb") as f:
-            st.download_button(f"Download {csv_filename}", data=f, file_name=csv_filename, mime="text/csv")
-
-    # Show completion message
-    st.success("✅ Conversion completed! Click the download buttons to get your CSV files.")
-
-    # Simulate auto-download (Only works for local apps, not browsers)
-    for csv_filename in converted_files:
-        st.markdown(f'<meta http-equiv="refresh" content="0; url={csv_filename}">', unsafe_allow_html=True)
+            csv_data = f.read()
+            b64 = base64.b64encode(csv_data).decode()  # Encode to Base64
+            href = f'<a href="data:file/csv;base64,{b64}" download="{csv_filename}">Click here to download {csv_filename}</a>'
+            st.markdown(href, unsafe_allow_html=True)  # Auto-download trigger
