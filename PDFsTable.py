@@ -1,45 +1,53 @@
 import streamlit as st
 import tabula
-import os
-from io import BytesIO
 import pandas as pd
+from io import BytesIO
 
-def convert_pdf_to_csv(pdf_file, method, filename):
-    # Save uploaded file temporarily
-    with open(filename, "wb") as f:
-        f.write(pdf_file.getbuffer())
-    
-    # Determine extraction method
+# Function to convert PDFs to CSV
+def convert_pdfs(pdf_files, method):
+    converted_files = []
     lattice = method == "Lattice"
     stream = method == "Stream"
-    
-    # Convert PDF to CSV
-    output_csv = f"{filename}.csv"
-    tabula.convert_into(filename, output_csv, output_format='csv', lattice=lattice, stream=stream, pages='all')
-    
-    # Read and return the CSV file
-    df = pd.read_csv(output_csv)
-    return df, output_csv
 
+    for pdf_file in pdf_files:
+        filename = pdf_file.name
+        output_csv = f"{filename}.csv"
+
+        # Save file temporarily
+        with open(filename, "wb") as f:
+            f.write(pdf_file.getbuffer())
+
+        # Convert PDF to CSV
+        dfs = tabula.read_pdf(filename, pages="all", multiple_tables=True, lattice=lattice, stream=stream)
+        
+        # Merge tables if multiple tables are found
+        if dfs:
+            df = pd.concat(dfs)
+        else:
+            df = pd.DataFrame()
+
+        # Convert dataframe to CSV
+        csv = df.to_csv(index=False).encode("utf-8")
+        converted_files.append((output_csv, csv, df))
+
+    return converted_files
+
+# Streamlit UI
 st.title("PDF Table to CSV Converter")
 
-st.write("Upload PDFs containing tables, select the extraction method, and get the CSV outputs.")
+st.markdown("""
+**Data Extraction Methods:**  
+- **Lattice:** Best for tables with grid lines.  
+- **Stream:** Best for tables without visible borders.  
+- **Guess:** Automatically selects the best method.
+""")
 
-method_description = st.markdown(
-    """
-    **Data Extraction Methods:**  
-    - **Lattice:** Works best for tables with clearly defined borders and grid lines.  
-    - **Stream:** Works best for tables without visible borders or irregular column alignments.  
-    - **Guess:** Automatically selects the best method for table extraction.
-    """
-)
-
-uploaded_files = st.file_uploader("Upload PDFs", type=["pdf"], accept_multiple_files=True)
+uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
 method = st.selectbox("Select Extraction Method", ["Lattice", "Stream", "Guess"], index=0)
 
-if uploaded_files:
-    for uploaded_file in uploaded_files:
-        df, output_csv = convert_pdf_to_csv(uploaded_file, method, uploaded_file.name)
-        csv = df.to_csv(index=False).encode('utf-8')
-        st.download_button(f"Download {uploaded_file.name}.csv", data=csv, file_name=output_csv, mime="text/csv")
+if uploaded_files and st.button("Convert to CSV"):
+    converted_files = convert_pdfs(uploaded_files, method)
+
+    for filename, csv_data, df in converted_files:
+        st.download_button(f"Download {filename}", data=csv_data, file_name=filename, mime="text/csv")
         st.dataframe(df)
