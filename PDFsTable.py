@@ -35,9 +35,9 @@ uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multi
 # Extraction method selection
 st.markdown("""
 **Data Extraction Methods:**  
-- **_Lattice:_** Best for tables with grid lines.  
-- _**Stream:_** Best for tables without visible borders.  
-- _**Guess:_** Automatically selects the best method.
+- _Lattice:_ Best for tables with grid lines.  
+- _Stream:_ Best for tables without visible borders.  
+- _Guess:_ Automatically selects the best method.
 """, unsafe_allow_html=True)
 
 # Select the method of extraction
