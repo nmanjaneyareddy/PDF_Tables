@@ -2,4 +2,3 @@ streamlit
 tabula-py
 pandas
 numpy
-openjdk-17-jre
