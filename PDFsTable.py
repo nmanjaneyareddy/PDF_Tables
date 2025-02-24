@@ -38,7 +38,7 @@ st.markdown("""
 - **_Lattice:_** Best for tables with grid lines.  
 - _**Stream:_** Best for tables without visible borders.  
 - _**Guess:_** Automatically selects the best method.
-""", unsafe_allow_html=True))
+""", unsafe_allow_html=True)
 
 # Select the method of extraction
 method = st.selectbox("Select Extraction Method", ["Lattice", "Stream", "Guess"], index=0)
