@@ -5,6 +5,9 @@ import zipfile
 from io import BytesIO
 from tempfile import NamedTemporaryFile
 
+
+st.set_page_config(page_title="Accu Table", page_icon="")
+
 # PDF and Table Icons
 pdf_icon = "https://cdn.pixabay.com/photo/2020/03/10/17/02/pdf-4919559_1280.png"
 table_icon = "https://img.freepik.com/premium-psd/csv-file_689261-99.jpg"
@@ -22,7 +25,6 @@ with col3:
     st.image(table_icon, width=60)
 
 # Streamlit App Title
-st.set_page_config(page_title="Accu Table", page_icon="")
 st.title("AccuTable: PDF to CSV")
 
 st.write(
