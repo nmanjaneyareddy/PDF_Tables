@@ -22,6 +22,7 @@ with col3:
     st.image(table_icon, width=60)
 
 # Streamlit App Title
+st.set_page_config(page_title="Accu Table", page_icon="")
 st.title("AccuTable: PDF to CSV")
 
 st.write(
